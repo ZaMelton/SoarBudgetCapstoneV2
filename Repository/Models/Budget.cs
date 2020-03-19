@@ -23,6 +23,8 @@ namespace Repository.Models
         [Display(Name = "Random Expense Limit")]
         public double RandomExpenseLimit { get; set; }
 
+        public DateTime BudgetStartDate { get; set; }
+
         public int MonthId { get; set; }
 
         public  int Year { get; set; }

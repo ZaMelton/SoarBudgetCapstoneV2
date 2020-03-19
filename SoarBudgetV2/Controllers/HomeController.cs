@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,19 @@ namespace SoarBudgetV2.Controllers
 
         public IActionResult Index()
         {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId != null)
+            {
+                try
+                {
+                    return RedirectToAction("Index", "Budgeteer");
+                }
+                catch (Exception)
+                {
+                    return View();
+                }
+            }
             return View();
         }
 

@@ -19,7 +19,12 @@ namespace Repository.Models
         public string Category { get; set; }
 
         [Required]
-        public double Amount { get; set; }
+        [Display(Name = "Amount To Pay Per Month")]
+        public double AmountToPayPerMonth { get; set; }
+
+        [Required]
+        [Display(Name = "Total Debt Amount")]
+        public double TotalDebtAmount { get; set; }
 
         [ForeignKey("Budgeteer")]
         public int? BudgeteerId { get; set; }

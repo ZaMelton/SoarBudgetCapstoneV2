@@ -42,7 +42,6 @@ namespace SoarBudgetV2
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
