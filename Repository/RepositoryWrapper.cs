@@ -8,7 +8,7 @@ namespace Repository
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
-        private ApplicationDbContext _context;
+        private RepositoryDbContext _context;
         private IBillRepository _bill;
         private IBudgetRepository _budget;
         private IBudgeteerRepository _budgeteer;
@@ -106,7 +106,7 @@ namespace Repository
                 return _wallet;
             } 
         }
-        public RepositoryWrapper(ApplicationDbContext context)
+        public RepositoryWrapper(RepositoryDbContext context)
         {
             _context = context;
         }

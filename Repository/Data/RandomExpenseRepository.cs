@@ -9,7 +9,7 @@ namespace Repository.Data
 {
     public class RandomExpenseRepository : RepositoryBase<RandomExpense>, IRandomExpenseRepository
     {
-        public RandomExpenseRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
+        public RandomExpenseRepository(RepositoryDbContext applicationDbContext) : base(applicationDbContext)
         {
 
         }
