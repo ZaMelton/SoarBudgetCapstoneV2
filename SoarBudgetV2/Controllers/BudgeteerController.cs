@@ -25,8 +25,8 @@ namespace SoarBudgetV2.Controllers
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (_repo.Budgeteers.FindByCondition(e => e.UserId == userId).Any())
             {
-                var budgeteer = _repo.Budgeteers.FindByCondition(e => e.UserId == userId).FirstOrDefault();
-
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = GetAndCheckBudget(budgeteer);
                 return View(budgeteer);
             }
             else
@@ -35,6 +35,23 @@ namespace SoarBudgetV2.Controllers
             }
         }
 
+        public Budget GetAndCheckBudget(Budgeteer budgeteer)
+        {
+            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+            if (budget == null || budget.MonthId != DateTime.Now.Month || budget.Year != DateTime.Now.Year)
+            {
+                budget = new Budget
+                {
+                    BudgetStartDate = DateTime.Today,
+                    MonthId = DateTime.Now.Month,
+                    Year = DateTime.Now.Year,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.Budgets.Create(budget);
+                _repo.Save();
+            }
+            return budget;
+        }
         // GET: Budgeteer/Details/5
         public ActionResult Details(int id)
         {

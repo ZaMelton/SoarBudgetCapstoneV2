@@ -22,6 +22,10 @@ namespace Repository
         {
             return RepositoryDbContext.Set<T>().Where(expression).AsNoTracking();
         }
+        public IQueryable<T> FindByManyCondition(Expression<Func<T, bool>> expression, Expression<Func<T, bool>> expression2, Expression<Func<T, bool>> expression3)
+        {
+            return RepositoryDbContext.Set<T>().Where(expression).Where(expression2).Where(expression3).AsNoTracking();
+        }
         public void Create(T entity)
         {
             RepositoryDbContext.Set<T>().Add(entity);

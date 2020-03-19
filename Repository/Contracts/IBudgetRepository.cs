@@ -10,5 +10,6 @@ namespace Repository.Contracts
         public void CreateBudget(Budget budget);
         public Budget GetBudget(int budgetId);
         public List<Budget> GetAllBudgetsForBudgeteer(int budgeteerId);
+        public Budget GetBudgetByBudgeteerIdMonthAndYear(int budgeteerId, int month, int year);
     }
 }

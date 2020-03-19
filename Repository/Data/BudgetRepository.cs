@@ -28,5 +28,10 @@ namespace Repository.Data
         {
             return FindByCondition(b => b.BudgetId == budgetId).FirstOrDefault();
         }
+
+        public Budget GetBudgetByBudgeteerIdMonthAndYear(int budgeteerId, int month, int year)
+        {
+            return FindByCondition(b => b.BudgeteerId == budgeteerId && b.MonthId == month && b.Year == year).FirstOrDefault();
+        }
     }
 }
