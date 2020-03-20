@@ -29,11 +29,21 @@ namespace SoarBudgetV2.Controllers
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
                 var budget = GetCheckAndCreateBudget(budgeteer);
                 var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+                var bills = _repo.Bills.GetAllBillsForBudgeteer(budgeteer.BudgeteerId);
+                var budgetItems = _repo.BudgetItems.GetAllBudgetItemsForBudgeteer(budgeteer.BudgeteerId);
+                var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId);
+                var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
+                var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
                     Budget = budget,
-                    Wallet = wallet
+                    Wallet = wallet,
+                    Bills = bills,
+                    BudgetItems = budgetItems,
+                    DebtItems = debtItems,
+                    GoalItems = goalItems,
+                    RandomExpenses = randomExpenses
                 };
                 return View(budgeteerView);
             }
@@ -158,13 +168,13 @@ namespace SoarBudgetV2.Controllers
             }
         }
 
-        //GET: Bill/Create
+        //GET: BudgetItem/Create
         public ActionResult CreateBudgetItem()
         {
             return View();
         }
 
-        // POST: Bill/Create
+        // POST: BudgetItem/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateBudgetItem(BudgetItem budgetItem)
@@ -191,13 +201,13 @@ namespace SoarBudgetV2.Controllers
             }
         }
 
-        //GET: Bill/Create
+        //GET: DebtItem/Create
         public ActionResult CreateDebtItem()
         {
             return View();
         }
 
-        // POST: Bill/Create
+        // POST: DebtItem/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateDebtItem(DebtItem debtItem)
@@ -225,13 +235,13 @@ namespace SoarBudgetV2.Controllers
             }
         }
 
-        //GET: Bill/Create
+        //GET: GoalItem/Create
         public ActionResult CreateGoalItem()
         {
             return View();
         }
 
-        // POST: Bill/Create
+        // POST: GoalItem/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateGoalItem(GoalItem goalItem)
@@ -258,13 +268,13 @@ namespace SoarBudgetV2.Controllers
             }
         }
 
-        //GET: Bill/Create
+        //GET: RandomExpens/Create
         public ActionResult CreateRandomExpense()
         {
             return View();
         }
 
-        // POST: Bill/Create
+        // POST: RandomExpens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRandomExpens(RandomExpense randomExpense)
