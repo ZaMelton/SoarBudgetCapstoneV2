@@ -19,7 +19,7 @@ namespace Repository.Data
             Create(wallet);
         }
 
-        public Wallet GetWallet(int walletId)
+        public Wallet GetWallet(int? walletId)
         {
             return FindByCondition(w => w.WalletId == walletId).FirstOrDefault();
         }

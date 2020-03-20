@@ -8,7 +8,7 @@ namespace Repository.Contracts
     public interface IWalletRepository : IRepositoryBase<Wallet>
     {
         public void CreateWallet(Wallet wallet);
-        public Wallet GetWallet(int walletId);
+        public Wallet GetWallet(int? walletId);
         public List<Wallet> GetAllWallets();
     }
 }

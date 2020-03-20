@@ -22,6 +22,26 @@ namespace Repository.Models
         [Required]
         [Display(Name = "Random Expense Limit")]
         public double RandomExpenseLimit { get; set; }
+        [Display(Name = "Monthly Total Money")]
+        public double MonthlyTotalMoney { get; set; }
+
+        [Display(Name = "Monthly Budget Item Money")]
+        public double MonthlyBudgetItemMoney { get; set; }
+
+        [Display(Name = "Monthly Debt Item Money")]
+        public double MonthlyDebtItemMoney { get; set; }
+
+        [Display(Name = "Monthly Bill Money")]
+        public double MonthlyBillMoney { get; set; }
+
+        [Display(Name = "Monthly Goal Item Money")]
+        public double MonthlyGoalItemMoney { get; set; }
+
+        [Display(Name = "Monthly Random Expense Money")]
+        public double MonthlyRandomExpenseMoney { get; set; }
+
+        [Display(Name = "Monthly Money Saved")]
+        public double MonthlyMoneySaved { get; set; }
 
         public DateTime BudgetStartDate { get; set; }
 

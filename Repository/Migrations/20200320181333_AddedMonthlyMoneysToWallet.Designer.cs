@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Data;
 
 namespace Repository.Migrations
 {
     [DbContext(typeof(RepositoryDbContext))]
-    partial class RepositoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200320181333_AddedMonthlyMoneysToWallet")]
+    partial class AddedMonthlyMoneysToWallet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,31 +66,10 @@ namespace Repository.Migrations
                     b.Property<int>("MonthId")
                         .HasColumnType("int");
 
-                    b.Property<double>("MonthlyBillMoney")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyBudgetItemMoney")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyDebtItemMoney")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyGoalItemMoney")
-                        .HasColumnType("float");
-
                     b.Property<double>("MonthlyIncome")
                         .HasColumnType("float");
 
                     b.Property<double>("MonthlyLimit")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyMoneySaved")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyRandomExpenseMoney")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MonthlyTotalMoney")
                         .HasColumnType("float");
 
                     b.Property<double>("RandomExpenseLimit")
@@ -251,6 +232,27 @@ namespace Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("MonthlyBillMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyBudgetItemMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyDebtItemMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyGoalItemMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyMoneySaved")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyRandomExpenseMoney")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MonthlyTotalMoney")
+                        .HasColumnType("float");
 
                     b.Property<double>("TotalBillMoney")
                         .HasColumnType("float");

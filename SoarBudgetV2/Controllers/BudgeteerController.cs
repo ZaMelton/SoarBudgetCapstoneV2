@@ -28,10 +28,12 @@ namespace SoarBudgetV2.Controllers
             {
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
                 var budget = GetCheckAndCreateBudget(budgeteer);
+                var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
-                    Budget = budget
+                    Budget = budget,
+                    Wallet = wallet
                 };
                 return View(budgeteerView);
             }
@@ -67,6 +69,13 @@ namespace SoarBudgetV2.Controllers
                     MonthlyIncome = lastMonthBudget.MonthlyIncome,
                     MonthlyLimit = lastMonthBudget.MonthlyLimit,
                     RandomExpenseLimit = lastMonthBudget.RandomExpenseLimit,
+                    MonthlyBillMoney = 0,
+                    MonthlyBudgetItemMoney = 0,
+                    MonthlyDebtItemMoney = 0,
+                    MonthlyGoalItemMoney = 0,
+                    MonthlyMoneySaved = 0,
+                    MonthlyRandomExpenseMoney = 0,
+                    MonthlyTotalMoney = 0,
                     BudgetStartDate = DateTime.Today,
                     MonthId = DateTime.Now.Month,
                     Year = DateTime.Now.Year,
@@ -112,6 +121,73 @@ namespace SoarBudgetV2.Controllers
             catch
             {
                 return View(budgeteer);
+            }
+        }
+
+        //GET: Bill/Create
+        public ActionResult CreateBill()
+        {
+            return View();
+        }
+
+        // POST: Bill/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateBill(Bill bill)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+                var newBill = new Bill
+                {
+                    BillName = bill.BillName,
+                    BillType = bill.BillType,
+                    DueDate = bill.DueDate,
+                    Amount = bill.Amount,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.Bills.Create(newBill);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(bill);
+            }
+        }
+
+        //GET: Bill/Create
+        public ActionResult CreateBudgetItem()
+        {
+            return View();
+        }
+
+        // POST: Bill/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateBudgetItem(BudgetItem budgetItem)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+                var newBudgetItem = new BudgetItem
+                {
+                    BudgetItemName = budgetItem.BudgetItemName,
+                    Category = budgetItem.Category,
+                    Amount = budgetItem.Amount,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.BudgetItems.Create(budgetItem);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(budgetItem);
             }
         }
 
