@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Contracts;
 using Repository.Models;
+using SoarBudgetV2.Models;
 
 namespace SoarBudgetV2.Controllers
 {
@@ -23,25 +24,49 @@ namespace SoarBudgetV2.Controllers
         public ActionResult Index()
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (_repo.Budgeteers.FindByCondition(e => e.UserId == userId).Any())
+            if (_repo.Budgeteers.FindByCondition(b => b.UserId == userId).Any())
             {
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
-                var budget = GetAndCheckBudget(budgeteer);
-                return View(budgeteer);
+                var budget = GetCheckAndCreateBudget(budgeteer);
+                ViewModel budgeteerView = new ViewModel
+                {
+                    Budgeteer = budgeteer,
+                    Budget = budget
+                };
+                return View(budgeteerView);
             }
             else
             {
-                return RedirectToAction("Create");
+                return RedirectToAction("CreateBudgeteer");
             }
         }
 
-        public Budget GetAndCheckBudget(Budgeteer budgeteer)
+        public Budget GetCheckAndCreateBudget(Budgeteer budgeteer)
         {
-            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
-            if (budget == null || budget.MonthId != DateTime.Now.Month || budget.Year != DateTime.Now.Year)
+            if(!(_repo.Budgets.FindByCondition(b => b.BudgeteerId == budgeteer.BudgeteerId).Any()))
             {
+                var newBudget = new Budget
+                {
+                    BudgetStartDate = DateTime.Today,
+                    MonthId = DateTime.Now.Month,
+                    Year = DateTime.Now.Year,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.Budgets.Create(newBudget);
+                _repo.Save();
+            }
+
+            //Grab their current budget to pass to View
+            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+
+            if (budget == null)//If budget is null, that means there is a budget in the database, but its not current, need to make a new one
+            {
+                var lastMonthBudget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month - 1, DateTime.Now.Year);
                 budget = new Budget
                 {
+                    MonthlyIncome = lastMonthBudget.MonthlyIncome,
+                    MonthlyLimit = lastMonthBudget.MonthlyLimit,
+                    RandomExpenseLimit = lastMonthBudget.RandomExpenseLimit,
                     BudgetStartDate = DateTime.Today,
                     MonthId = DateTime.Now.Month,
                     Year = DateTime.Now.Year,
@@ -52,6 +77,7 @@ namespace SoarBudgetV2.Controllers
             }
             return budget;
         }
+
         // GET: Budgeteer/Details/5
         public ActionResult Details(int id)
         {
@@ -59,7 +85,7 @@ namespace SoarBudgetV2.Controllers
         }
 
         // GET: Budgeteer/Create
-        public ActionResult Create()
+        public ActionResult CreateBudgeteer()
         {
             return View();
         }
@@ -67,7 +93,7 @@ namespace SoarBudgetV2.Controllers
         // POST: Budgeteer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Budgeteer budgeteer)
+        public ActionResult CreateBudgeteer(Budgeteer budgeteer)
         {
             try
             {
@@ -90,48 +116,59 @@ namespace SoarBudgetV2.Controllers
         }
 
         // GET: Budgeteer/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult EditBudgeteer(int id)
         {
-            return View();
+            var budgeteerFromDb = _repo.Budgeteers.GetBudgeteer(id);
+            return View(budgeteerFromDb);
         }
 
         // POST: Budgeteer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult EditBudgeteer(int id, Budgeteer budgeteer)
         {
             try
             {
-                // TODO: Add update logic here
-
+                var budgeteerFromDb = _repo.Budgeteers.GetBudgeteer(id);
+                budgeteerFromDb.FirstName = budgeteer.FirstName;
+                budgeteerFromDb.LastName = budgeteer.LastName;
+                budgeteerFromDb.Email = budgeteer.Email;
+                budgeteerFromDb.PhoneNumber = budgeteer.PhoneNumber;
+                _repo.Budgeteers.Update(budgeteerFromDb);
+                _repo.Save();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(budgeteer);
             }
         }
 
-        // GET: Budgeteer/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Budget/Edit/5
+        public ActionResult EditBudget(int budgetId)
         {
-            return View();
+            var budgetFromDb = _repo.Budgets.GetBudget(budgetId);
+            return View(budgetFromDb);
         }
 
-        // POST: Budgeteer/Delete/5
+        // POST: Budget/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult EditBudget(int budgetId, Budget budget)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                var budgetFromDb = _repo.Budgets.GetBudget(budgetId);
+                budgetFromDb.MonthlyIncome = budget.MonthlyIncome;
+                budgetFromDb.MonthlyLimit = budget.MonthlyLimit;
+                budgetFromDb.RandomExpenseLimit = budget.RandomExpenseLimit;
+                _repo.Budgets.Update(budgetFromDb);
+                _repo.Save();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(budget);
             }
         }
     }

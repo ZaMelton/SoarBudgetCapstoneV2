@@ -1,9 +1,95 @@
-﻿@model Repository.Models.Budgeteer
+﻿@model SoarBudgetV2.Models.ViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Welcome, @Model.Budgeteer.FirstName</h1>
+<br />
+<br />
+<div class="row">
+    <div class="col-sm-3">
+        <br />
+        <br />
+        <br />
+        <br />
+        <h3>Your Budget</h3>
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.Budget.MonthlyIncome)
+            </dt>
+            <dd>
+                $@Html.DisplayFor(model => model.Budget.MonthlyIncome)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Budget.MonthlyLimit)
+            </dt>
+            <dd>
+                $@Html.DisplayFor(model => model.Budget.MonthlyLimit)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Budget.RandomExpenseLimit)
+            </dt>
+            <dd>
+                $@Html.DisplayFor(model => model.Budget.RandomExpenseLimit)
+            </dd>
+        </dl>
+        <a class="btn btn-outline-secondary" asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId">Edit Budget</a>
+    </div>
+    <div class="col-sm-6">
+        <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FChicago&amp;src=emFtZWx0b0BnbWFpbC5jb20&amp;src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23039BE5&amp;color=%2333B679&amp;color=%230B8043&amp;showTitle=1&amp;showCalendars=1&amp;title=%20" style="border-width:0" width="700" height="500" frameborder="0" scrolling="no"></iframe>
+    </div>
+    <div class="col-sm-3">
 
-<iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FChicago&amp;src=emFtZWx0b0BnbWFpbC5jb20&amp;src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23039BE5&amp;color=%2333B679&amp;color=%230B8043&amp;showTitle=1&amp;showCalendars=1&amp;title=%20" style="border-width:0" width="700" height="500" frameborder="0" scrolling="no"></iframe>
+    </div>
+    @*Trigger the modal with a button
+        <a asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId" class="btn btn-outline-secondary" data-toggle="modal" data-target="#myModal">Edit Budget</a>
+        <div class="container">
+             Modal
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+
+                     Modal content
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Modal Header</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <form asp-action="EditBudget">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <input type="hidden" asp-for="Budget.BudgetId" />
+                                        <div class="form-group">
+                                            <label asp-for="Budget.MonthlyIncome" class="control-label"></label>
+                                            <input asp-for="Budget.MonthlyIncome" class="form-control" />
+                                            <span asp-validation-for="Budget.MonthlyIncome" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Budget.MonthlyLimit" class="control-label"></label>
+                                            <input asp-for="Budget.MonthlyLimit" class="form-control" />
+                                            <span asp-validation-for="Budget.MonthlyLimit" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label asp-for="Budget.RandomExpenseLimit" class="control-label"></label>
+                                            <input asp-for="Budget.RandomExpenseLimit" class="form-control" />
+                                            <span asp-validation-for="Budget.RandomExpenseLimit" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Save" class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>*@
+</div>
