@@ -181,13 +181,114 @@ namespace SoarBudgetV2.Controllers
                     Amount = budgetItem.Amount,
                     BudgeteerId = budgeteer.BudgeteerId
                 };
-                _repo.BudgetItems.Create(budgetItem);
+                _repo.BudgetItems.Create(newBudgetItem);
                 _repo.Save();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View(budgetItem);
+            }
+        }
+
+        //GET: Bill/Create
+        public ActionResult CreateDebtItem()
+        {
+            return View();
+        }
+
+        // POST: Bill/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateDebtItem(DebtItem debtItem)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+                var newDebtItem = new DebtItem
+                {
+                    DebtItemName = debtItem.DebtItemName,
+                    Category = debtItem.Category,
+                    TotalDebtAmount = debtItem.TotalDebtAmount,
+                    AmountToPayPerMonth = debtItem.AmountToPayPerMonth,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.DebtItems.Create(newDebtItem);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(debtItem);
+            }
+        }
+
+        //GET: Bill/Create
+        public ActionResult CreateGoalItem()
+        {
+            return View();
+        }
+
+        // POST: Bill/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateGoalItem(GoalItem goalItem)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+                var newGoalItem = new GoalItem
+                {
+                    GoalItemName = goalItem.GoalItemName,
+                    Category = goalItem.Category,
+                    Amount = goalItem.Amount,
+                    BudgeteerId = budgeteer.BudgeteerId
+                };
+                _repo.GoalItems.Create(newGoalItem);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(goalItem);
+            }
+        }
+
+        //GET: Bill/Create
+        public ActionResult CreateRandomExpense()
+        {
+            return View();
+        }
+
+        // POST: Bill/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateRandomExpens(RandomExpense randomExpense)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+
+                var newRandomExpense = new RandomExpense
+                {
+                    RandomExpenseName = randomExpense.RandomExpenseName,
+                    Category = randomExpense.Category,
+                    Amount = randomExpense.Amount,
+                    BudgetId = budget.BudgetId
+                };
+                _repo.RandomExpenses.Create(newRandomExpense);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(randomExpense);
             }
         }
 
