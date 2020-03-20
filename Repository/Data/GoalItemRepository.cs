@@ -9,7 +9,7 @@ namespace Repository.Data
 {
     public class GoalItemRepository : RepositoryBase<GoalItem>, IGoalItemRepository
     {
-        public GoalItemRepository(RepositoryDbContext applicationDbContext) : base(applicationDbContext)
+        public GoalItemRepository(RepositoryDbContext repositoryDbContext) : base(repositoryDbContext)
         {
 
         }

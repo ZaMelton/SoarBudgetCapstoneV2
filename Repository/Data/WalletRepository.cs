@@ -9,7 +9,7 @@ namespace Repository.Data
 {
     public class WalletRepository : RepositoryBase<Wallet>, IWalletRepository
     {
-        public WalletRepository(RepositoryDbContext applicationDbContext) : base(applicationDbContext)
+        public WalletRepository(RepositoryDbContext repositoryDbContext) : base(repositoryDbContext)
         {
 
         }

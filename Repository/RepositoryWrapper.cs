@@ -16,6 +16,7 @@ namespace Repository
         private IDebtItemRepository _debtItem;
         private IGoalItemRepository _goalItem;
         private IRandomExpenseRepository _randomExpense;
+        private IBudgetItemExpenseRepository _budgetItemExpense;
         private IWalletRepository _wallet;
 
         public IBillRepository Bills 
@@ -94,6 +95,17 @@ namespace Repository
                 }
                 return _randomExpense;
             } 
+        }
+        public IBudgetItemExpenseRepository BudgetItemExpenses
+        {
+            get
+            {
+                if (_budgetItemExpense == null)
+                {
+                    _budgetItemExpense = new BudgetItemExpenseRepository(_context);
+                }
+                return _budgetItemExpense;
+            }
         }
         public IWalletRepository Wallets 
         {

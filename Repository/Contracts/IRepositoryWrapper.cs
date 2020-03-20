@@ -13,6 +13,7 @@ namespace Repository.Contracts
         IDebtItemRepository DebtItems { get; }
         IGoalItemRepository GoalItems { get; }
         IRandomExpenseRepository RandomExpenses { get; }
+        IBudgetItemExpenseRepository BudgetItemExpenses { get; }
         IWalletRepository Wallets { get; }
         void Save();
     }

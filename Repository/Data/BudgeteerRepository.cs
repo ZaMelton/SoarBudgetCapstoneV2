@@ -10,7 +10,7 @@ namespace Repository.Data
 {
     public class BudgeteerRepository : RepositoryBase<Budgeteer>, IBudgeteerRepository
     {
-        public BudgeteerRepository(RepositoryDbContext applicationDbContext) : base(applicationDbContext)
+        public BudgeteerRepository(RepositoryDbContext repositoryDbContext) : base(repositoryDbContext)
         {
 
         }

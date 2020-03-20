@@ -16,5 +16,6 @@ namespace SoarBudgetV2.Models
         public List<BudgetItem> BudgetItems { get; set; }
         public List<GoalItem> GoalItems { get; set; }
         public List<RandomExpense> RandomExpenses { get; set; }
+        public List<BudgetItemExpense> BudgetItemExpenses { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace Repository.Data
         public DbSet<DebtItem> DebtItems { get; set; }
         public DbSet<GoalItem> GoalItems { get; set; }
         public DbSet<RandomExpense> RandomExpenses { get; set; }
+        public DbSet<BudgetItemExpense> BudgetItemExpenses { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
     }
 }

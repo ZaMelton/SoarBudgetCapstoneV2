@@ -34,6 +34,7 @@ namespace SoarBudgetV2.Controllers
                 var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId);
                 var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
                 var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
+                var budgetItemExpenses = _repo.BudgetItemExpenses.GetAllBudgetItemExpensesForBudget(budget.BudgetId);
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
@@ -43,7 +44,8 @@ namespace SoarBudgetV2.Controllers
                     BudgetItems = budgetItems,
                     DebtItems = debtItems,
                     GoalItems = goalItems,
-                    RandomExpenses = randomExpenses
+                    RandomExpenses = randomExpenses,
+                    BudgetItemExpenses = budgetItemExpenses
                 };
                 return View(budgeteerView);
             }
