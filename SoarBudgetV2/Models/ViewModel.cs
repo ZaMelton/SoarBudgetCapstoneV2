@@ -11,6 +11,8 @@ namespace SoarBudgetV2.Models
         public Budgeteer Budgeteer { get; set; }
         public Budget Budget { get; set; }
         public Wallet Wallet { get; set; }
+        public RandomExpense RandomExpense { get; set; }
+        public BudgetItemExpense BudgetItemExpense { get; set; }
         public List<Bill> Bills { get; set; }
         public List<DebtItem> DebtItems { get; set; }
         public List<BudgetItem> BudgetItems { get; set; }

@@ -279,13 +279,14 @@ namespace SoarBudgetV2.Controllers
         // POST: RandomExpens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateRandomExpens(RandomExpense randomExpense)
+        public ActionResult CreateRandomExpense(RandomExpense randomExpense)
         {
             try
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
                 var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+                var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
 
                 var newRandomExpense = new RandomExpense
                 {
@@ -296,11 +297,66 @@ namespace SoarBudgetV2.Controllers
                 };
                 _repo.RandomExpenses.Create(newRandomExpense);
                 _repo.Save();
+
+                budget.MonthlyRandomExpenseMoney += randomExpense.Amount;
+                budget.MonthlyTotalMoney += randomExpense.Amount;
+                _repo.Budgets.Update(budget);
+                _repo.Save();
+
+                wallet.TotalRandomExpenseMoney += randomExpense.Amount;
+                wallet.TotalMoney += randomExpense.Amount;
+                _repo.Wallets.Update(wallet);
+                _repo.Save();
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View(randomExpense);
+            }
+        }
+
+        //GET: BudgetItemExpense/Create
+        public ActionResult CreateBudgetItemExpense()
+        {
+            return View();
+        }
+
+        // POST: BudgetItemExpense/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateBudgetItemExpense(BudgetItemExpense budgetItemExpense)
+        {
+            try
+            {
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+                var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+
+                var newBudgetItemExpense = new BudgetItemExpense
+                {
+                    BudgetItemExpenseName = budgetItemExpense.BudgetItemExpenseName,
+                    Category = budgetItemExpense.Category,
+                    Amount = budgetItemExpense.Amount,
+                    BudgetId = budget.BudgetId
+                };
+                _repo.BudgetItemExpenses.Create(newBudgetItemExpense);
+                _repo.Save();
+
+                budget.MonthlyBudgetItemMoney += budgetItemExpense.Amount;
+                budget.MonthlyTotalMoney += budgetItemExpense.Amount;
+                _repo.Budgets.Update(budget);
+                _repo.Save();
+
+                wallet.TotalBudgetItemMoney += budgetItemExpense.Amount;
+                wallet.TotalMoney += budgetItemExpense.Amount;
+                _repo.Wallets.Update(wallet);
+                _repo.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(budgetItemExpense);
             }
         }
 

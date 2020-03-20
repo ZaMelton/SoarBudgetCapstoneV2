@@ -138,6 +138,84 @@
 
                 </div>
             </div>
-
         </div>*@
+</div>
+
+<hr />
+<div class="row">
+    <div class="col-sm-9">
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        Random Item Expense
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RandomExpense.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RandomExpense.Amount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RandomExpenses)
+                {
+                    <tr class="table-light">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RandomExpenseName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                        <td>
+                            $@Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        Budget Item Expense
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.BudgetItemExpense.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.BudgetItemExpense.Amount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BudgetItemExpenses)
+                {
+                    <tr class="table-light">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BudgetItemExpenseName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                        <td>
+                            $@Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-sm-3">
+        <a class="btn btn-outline-secondary" asp-action="CreateRandomExpense">Add Random Expense</a>
+        <br />
+        <br />
+        <a class="btn btn-outline-secondary" asp-action="CreateBudgetItemExpense">Add Budget Item Expense</a>
+    </div>
+
+
+
 </div>
