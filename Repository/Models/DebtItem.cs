@@ -12,15 +12,19 @@ namespace Repository.Models
         public int DebtItemId { get; set; }
 
         [Required]
-        [Display(Name = "Debt Item Name")]
+        [Display(Name = "Debts")]
         public string DebtItemName { get; set; }
 
         [Required]
         public string Category { get; set; }
 
         [Required]
-        [Display(Name = "Amount To Pay Per Month")]
+        [Display(Name = "Amount")]
         public double AmountToPayPerMonth { get; set; }
+
+        [Required]
+        [Display(Name = "Due Date")]
+        public DateTime DueDate { get; set; }
 
         [Required]
         [Display(Name = "Total Debt Amount")]

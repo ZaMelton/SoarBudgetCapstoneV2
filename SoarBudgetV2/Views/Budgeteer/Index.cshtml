@@ -49,8 +49,15 @@
 <div class="row">
     <div class="col-sm-4">
         <h3>Your Spending</h3>
-        <!--Div that holds the pie chart-->
-        <div id="chart_div"></div>
+        @if (Model.Budget.MonthlyTotalMoney <= 0)
+        {
+            <p>You have no spending to track this month yet.</p>
+        }
+        else
+        {
+            <!--Div that holds the pie chart-->
+            <div id="chart_div"></div>
+        }
         <br />
         <h3>Your Budget Limits</h3>
         <dl>
@@ -85,10 +92,10 @@
                 $@Html.DisplayFor(model => model.Budget.MonthlyMoneySaved)
             </dd>
         </dl>
-        <a class="btn btn-outline-secondary" asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId">Edit Budget Limits</a>
+        <a class="btn btn-secondary" asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId">Edit Budget Limits</a>
     </div>
     <div class="col-sm-8">
-        <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FChicago&amp;src=emFtZWx0b0BnbWFpbC5jb20&amp;src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23039BE5&amp;color=%2333B679&amp;color=%230B8043&amp;showTitle=1&amp;showCalendars=1&amp;title=%20" style="border-width:0" width="700" height="500" frameborder="0" scrolling="no"></iframe>
+        <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FChicago&amp;src=emFtZWx0b0BnbWFpbC5jb20&amp;src=YWRkcmVzc2Jvb2sjY29udGFjdHNAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%23039BE5&amp;color=%2333B679&amp;color=%230B8043&amp;showTitle=1&amp;showCalendars=1&amp;title=%20" style="border-width:0" width="700" height="600" frameborder="0" scrolling="no"></iframe>
     </div>
     @*Trigger the modal with a button
         <a asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId" class="btn btn-outline-secondary" data-toggle="modal" data-target="#myModal">Edit Budget</a>
@@ -144,43 +151,153 @@
 <hr />
 <div class="row">
     <div class="col-sm-9">
+        @*Bills*@
         <table class="table table-hover">
             <thead>
                 <tr class="table-dark">
                     <th>
-                        Random Item Expense
+                        @Html.DisplayNameFor(model => model.Bill.BillName)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.RandomExpense.Category)
+                        @Html.DisplayNameFor(model => model.Bill.BillType)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.RandomExpense.Amount)
+                        @Html.DisplayNameFor(model => model.Bill.Amount)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Bill.DueDate)
+                    </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.RandomExpenses)
+                @if (Model.Bills.Count <= 0)
                 {
-                    <tr class="table-light">
-                        <td>
-                            @Html.DisplayFor(modelItem => item.RandomExpenseName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Category)
-                        </td>
-                        <td>
-                            $@Html.DisplayFor(modelItem => item.Amount)
-                        </td>
-                    </tr>
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Bills)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BillName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BillType)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDate)
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-success" asp-action="" asp-route-id="">Pay Bill</a>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+
+        @*Debt Items*@
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        @Html.DisplayNameFor(model => model.DebtItem.DebtItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DebtItem.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DebtItem.AmountToPayPerMonth)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DebtItem.DueDate)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.DebtItems.Count <= 0)
+                {
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.DebtItems)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DebtItemName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.AmountToPayPerMonth)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDate)
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-success" asp-action="" asp-route-id="">Pay Debt</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
 
+        @*Budget Items*@
         <table class="table table-hover">
             <thead>
                 <tr class="table-dark">
                     <th>
-                        Budget Item Expense
+                        @Html.DisplayNameFor(model => model.BudgetItem.BudgetItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.BudgetItem.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Bill.Amount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.BudgetItems.Count <= 0)
+                {
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.BudgetItems)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BudgetItemName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        @*Budget Item Expenses*@
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        @Html.DisplayNameFor(model => model.BudgetItemExpense.BudgetItemExpenseName)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.BudgetItemExpense.Category)
@@ -191,29 +308,128 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.BudgetItemExpenses)
+                @if (Model.BudgetItemExpenses.Count <= 0)
                 {
-                    <tr class="table-light">
-                        <td>
-                            @Html.DisplayFor(modelItem => item.BudgetItemExpenseName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Category)
-                        </td>
-                        <td>
-                            $@Html.DisplayFor(modelItem => item.Amount)
-                        </td>
-                    </tr>
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.BudgetItemExpenses)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BudgetItemExpenseName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        @*Random Expenses*@
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        @Html.DisplayNameFor(model => model.RandomExpense.RandomExpenseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RandomExpense.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RandomExpense.Amount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.RandomExpenses.Count <= 0)
+                {
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                { 
+                    @foreach (var item in Model.RandomExpenses)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RandomExpenseName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        @*Goal Item*@
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>
+                        @Html.DisplayNameFor(model => model.GoalItem.GoalItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.GoalItem.Category)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.GoalItem.Amount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GoalItems.Count <= 0)
+                {
+                    <tr><td>There are no items to show</td></tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.GoalItems)
+                    {
+                        <tr class="table-light">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GoalItemName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                            </td>
+                            <td>
+                                $@Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
 
     <div class="col-sm-3">
-        <a class="btn btn-outline-secondary" asp-action="CreateRandomExpense">Add Random Expense</a>
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateRandomExpense">Add Random Expense</a>
         <br />
         <br />
-        <a class="btn btn-outline-secondary" asp-action="CreateBudgetItemExpense">Add Budget Item Expense</a>
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateBudgetItemExpense">Add Budget Item Expense</a>
+        <br />
+        <br />
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateBill">Add Bill</a>
+        <br />
+        <br />
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateBudgetItem">Add Budget Item</a>
+        <br />
+        <br />
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateDebtItem">Add Debt Item</a>
+        <br />
+        <br />
+        <a class="btn btn-secondary col-sm-12" asp-action="CreateGoalItem">Add Goal Item</a>
     </div>
 
 

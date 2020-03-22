@@ -12,7 +12,7 @@ namespace Repository.Models
         public int RandomExpenseId { get; set; }
 
         [Required]
-        [Display(Name = "Random Expense Name")]
+        [Display(Name = "Random Expense")]
         public string RandomExpenseName { get; set; }
 
         [Required]

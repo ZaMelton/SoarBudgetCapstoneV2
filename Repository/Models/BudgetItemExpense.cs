@@ -12,7 +12,7 @@ namespace Repository.Models
         public int BudgetItemExpenseId { get; set; }
 
         [Required]
-        [Display(Name = "Budget Item Expense Name")]
+        [Display(Name = "Budget Expense")]
         public string BudgetItemExpenseName { get; set; }
 
         [Required]

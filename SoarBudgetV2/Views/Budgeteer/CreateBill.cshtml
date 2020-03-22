@@ -1,0 +1,56 @@
+﻿@model Repository.Models.Bill
+
+@{
+    ViewData["Title"] = "CreateBill";
+}
+
+<h1>CreateBill</h1>
+
+<h4>Bill</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateBill">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BillName" class="control-label"></label>
+                <input asp-for="BillName" class="form-control" />
+                <span asp-validation-for="BillName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BillType" class="control-label"></label>
+                <select asp-for="BillType" class="form-control">
+                    <option value="Rent/Mortgage">Rent/Mortgage</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Internet">Internet</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Car Insurance">Car Insurance</option>
+                    <option value="Streaming Service">Streaming Service</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <input asp-for="DueDate" class="form-control" type="date"/>
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-outline-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-outline-primary" asp-action="Index">Back to Home</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,30 +1,25 @@
-﻿@model Repository.Models.BudgetItemExpense
+﻿@model Repository.Models.GoalItem
 
 @{
-    ViewData["Title"] = "CreateBudgetItemExpense";
+    ViewData["Title"] = "CreateGoalItem";
 }
 
-<h1>CreateBudgetItemExpense</h1>
+<h1>Create Goal Item</h1>
 
-<h4>BudgetItemExpense</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="CreateBudgetItemExpense">
+        <form asp-action="CreateGoalItem">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="BudgetItemExpenseName" class="control-label"></label>
-                <input asp-for="BudgetItemExpenseName" class="form-control" />
-                <span asp-validation-for="BudgetItemExpenseName" class="text-danger"></span>
+                <label asp-for="GoalItemName" class="control-label"></label>
+                <input asp-for="GoalItemName" class="form-control" />
+                <span asp-validation-for="GoalItemName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
                 <select asp-for="Category" class="form-control">
-                    <option value="Groceries">Groceries</option>
-                    <option value="Gas">Gas</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Coffee">Coffee</option>
-                    <option value="Dining Out">Dining Out</option>
+                    <option value="Treat Yo' Self">Treat Yo' Self</option>
                 </select>
             </div>
             <div class="form-group">

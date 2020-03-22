@@ -13,6 +13,10 @@ namespace SoarBudgetV2.Models
         public Wallet Wallet { get; set; }
         public RandomExpense RandomExpense { get; set; }
         public BudgetItemExpense BudgetItemExpense { get; set; }
+        public Bill Bill { get; set; }
+        public DebtItem DebtItem { get; set; }
+        public GoalItem GoalItem { get; set; }
+        public BudgetItem BudgetItem { get; set; }
         public List<Bill> Bills { get; set; }
         public List<DebtItem> DebtItems { get; set; }
         public List<BudgetItem> BudgetItems { get; set; }

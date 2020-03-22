@@ -12,7 +12,7 @@ namespace Repository.Models
         public int GoalItemId { get; set; }
 
         [Required]
-        [Display(Name = "Goal Item Name")]
+        [Display(Name = "Goal Item")]
         public string GoalItemName { get; set; }
 
         [Required]

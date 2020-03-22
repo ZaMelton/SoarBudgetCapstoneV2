@@ -225,6 +225,7 @@ namespace SoarBudgetV2.Controllers
                     Category = debtItem.Category,
                     TotalDebtAmount = debtItem.TotalDebtAmount,
                     AmountToPayPerMonth = debtItem.AmountToPayPerMonth,
+                    DueDate = debtItem.DueDate,
                     BudgeteerId = budgeteer.BudgeteerId
                 };
                 _repo.DebtItems.Create(newDebtItem);

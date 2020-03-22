@@ -12,7 +12,7 @@ namespace Repository.Models
         public int BillId { get; set; }
 
         [Required]
-        [Display(Name = "Bill Name")]
+        [Display(Name = "Bill")]
         public string BillName { get; set; }
 
         [Required]
