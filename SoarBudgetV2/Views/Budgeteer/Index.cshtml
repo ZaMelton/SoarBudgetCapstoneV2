@@ -193,7 +193,7 @@
                                 @Html.DisplayFor(modelItem => item.DueDate)
                             </td>
                             <td>
-                                <a class="btn btn-outline-success" asp-action="" asp-route-id="">Pay Bill</a>
+                                <a class="btn btn-outline-success" asp-action="PayBill" asp-route-billId="@item.BillId">Pay Bill</a>
                             </td>
                         </tr>
                     }
@@ -218,6 +218,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.DebtItem.DueDate)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DebtItem.TotalDebtAmount)
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -230,23 +233,26 @@
                 {
                     @foreach (var item in Model.DebtItems)
                     {
-                        <tr class="table-light">
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DebtItemName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Category)
-                            </td>
-                            <td>
-                                $@Html.DisplayFor(modelItem => item.AmountToPayPerMonth)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DueDate)
-                            </td>
-                            <td>
-                                <a class="btn btn-outline-success" asp-action="" asp-route-id="">Pay Debt</a>
-                            </td>
-                        </tr>
+            <tr class="table-light">
+                <td>
+                    @Html.DisplayFor(modelItem => item.DebtItemName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.AmountToPayPerMonth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DueDate)
+                </td>
+                <td>
+                    $@Html.DisplayFor(modelItem => item.TotalDebtAmount)
+                </td>
+                <td>
+                    <a class="btn btn-outline-success" asp-action="PayDebtItem" asp-route-debtItemId="@item.DebtItemId">Pay Debt</a>
+                </td>
+            </tr>
                     }
                 }
             </tbody>

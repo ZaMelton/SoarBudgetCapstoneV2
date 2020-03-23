@@ -26,6 +26,8 @@ namespace Repository.Models
         [Display(Name = "Bill Due Date")]
         public DateTime DueDate { get; set; }
 
+        public bool IsPaid { get; set; }
+
         [ForeignKey("Budgeteer")]
         public int? BudgeteerId { get; set; }
     }

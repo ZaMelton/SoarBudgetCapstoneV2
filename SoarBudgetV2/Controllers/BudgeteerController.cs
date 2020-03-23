@@ -29,12 +29,12 @@ namespace SoarBudgetV2.Controllers
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
                 var budget = GetCheckAndCreateBudget(budgeteer);
                 var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
-                var bills = _repo.Bills.GetAllBillsForBudgeteer(budgeteer.BudgeteerId);
+                var bills = _repo.Bills.GetAllBillsForBudgeteer(budgeteer.BudgeteerId).Where(b => b.IsPaid = false).ToList();
+                var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId).Where(d => d.IsPaid = false).ToList();
                 var budgetItems = _repo.BudgetItems.GetAllBudgetItemsForBudgeteer(budgeteer.BudgeteerId);
-                var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId);
-                var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
-                var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
                 var budgetItemExpenses = _repo.BudgetItemExpenses.GetAllBudgetItemExpensesForBudget(budget.BudgetId);
+                var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
+                var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
@@ -416,6 +416,77 @@ namespace SoarBudgetV2.Controllers
             {
                 return View(budget);
             }
+        }
+
+        public ActionResult PayBill(int billId)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+            var billFromDb = _repo.Bills.GetBill(billId);
+            billFromDb.IsPaid = true;
+            _repo.Bills.Update(billFromDb);
+            _repo.Save();
+
+            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+            budget.MonthlyBillMoney += billFromDb.Amount;
+            budget.MonthlyTotalMoney += billFromDb.Amount;
+            _repo.Budgets.Update(budget);
+            _repo.Save();
+
+            var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+            wallet.TotalBillMoney += billFromDb.Amount;
+            wallet.TotalMoney += billFromDb.Amount;
+            _repo.Wallets.Update(wallet);
+            _repo.Save();
+
+            var nextMonthBill = new Bill
+            {
+                BillName = billFromDb.BillName,
+                BillType = billFromDb.BillType,
+                Amount = billFromDb.Amount,
+                DueDate = billFromDb.DueDate.AddMonths(1),
+                BudgeteerId = billFromDb.BudgeteerId
+            };
+            _repo.Bills.Create(nextMonthBill);
+            _repo.Save();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult PayDebtItem(int debtItemId)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+
+            var debtItemFromDb = _repo.DebtItems.GetDebtItem(debtItemId);
+            debtItemFromDb.IsPaid = true;
+            _repo.DebtItems.Update(debtItemFromDb);
+            _repo.Save();
+
+            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+            budget.MonthlyDebtItemMoney += debtItemFromDb.AmountToPayPerMonth;
+            budget.MonthlyTotalMoney += debtItemFromDb.AmountToPayPerMonth;
+            _repo.Budgets.Update(budget);
+            _repo.Save();
+
+            var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+            wallet.TotalDebtItemMoney += debtItemFromDb.AmountToPayPerMonth;
+            wallet.TotalMoney += debtItemFromDb.AmountToPayPerMonth;
+            _repo.Wallets.Update(wallet);
+            _repo.Save();
+
+            var nextMonthDebtItem = new DebtItem
+            {
+                DebtItemName = debtItemFromDb.DebtItemName,
+                Category = debtItemFromDb.Category,
+                AmountToPayPerMonth = debtItemFromDb.AmountToPayPerMonth,
+                TotalDebtAmount = debtItemFromDb.TotalDebtAmount -= debtItemFromDb.AmountToPayPerMonth,
+                DueDate = debtItemFromDb.DueDate.AddMonths(1),
+                BudgeteerId = debtItemFromDb.BudgeteerId
+            };
+            _repo.DebtItems.Create(nextMonthDebtItem);
+            _repo.Save();
+            return RedirectToAction("Index");
         }
     }
 }

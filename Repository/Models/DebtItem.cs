@@ -27,8 +27,10 @@ namespace Repository.Models
         public DateTime DueDate { get; set; }
 
         [Required]
-        [Display(Name = "Total Debt Amount")]
+        [Display(Name = "Debt Amount")]
         public double TotalDebtAmount { get; set; }
+
+        public bool IsPaid { get; set; }
 
         [ForeignKey("Budgeteer")]
         public int? BudgeteerId { get; set; }
