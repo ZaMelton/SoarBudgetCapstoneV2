@@ -29,8 +29,8 @@ namespace SoarBudgetV2.Controllers
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
                 var budget = GetCheckAndCreateBudget(budgeteer);
                 var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
-                var bills = _repo.Bills.GetAllBillsForBudgeteer(budgeteer.BudgeteerId).Where(b => b.IsPaid = false).ToList();
-                var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId).Where(d => d.IsPaid = false).ToList();
+                var bills = _repo.Bills.GetAllBillsForBudgeteer(budgeteer.BudgeteerId).Where(b => b.IsPaid == false && b.DueDate.Month == DateTime.Now.Month).ToList();
+                var debtItems = _repo.DebtItems.GetAllDebtItemsForBudgeteer(budgeteer.BudgeteerId).Where(d => d.IsPaid == false && d.DueDate.Month == DateTime.Now.Month).ToList();
                 var budgetItems = _repo.BudgetItems.GetAllBudgetItemsForBudgeteer(budgeteer.BudgeteerId);
                 var budgetItemExpenses = _repo.BudgetItemExpenses.GetAllBudgetItemExpensesForBudget(budget.BudgetId);
                 var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);

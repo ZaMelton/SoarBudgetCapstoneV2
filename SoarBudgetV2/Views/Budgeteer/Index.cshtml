@@ -85,12 +85,6 @@
             <dd>
                 $@Html.DisplayFor(model => model.Budget.MonthlyTotalMoney)
             </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Budget.MonthlyMoneySaved)
-            </dt>
-            <dd>
-                $@Html.DisplayFor(model => model.Budget.MonthlyMoneySaved)
-            </dd>
         </dl>
         <a class="btn btn-secondary" asp-action="EditBudget" asp-route-budgetId="@Model.Budget.BudgetId">Edit Budget Limits</a>
     </div>

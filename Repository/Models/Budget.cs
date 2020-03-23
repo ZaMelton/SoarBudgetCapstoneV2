@@ -22,6 +22,7 @@ namespace Repository.Models
         [Required]
         [Display(Name = "Random Expense Limit")]
         public double RandomExpenseLimit { get; set; }
+
         [Display(Name = "Monthly Total Money")]
         public double MonthlyTotalMoney { get; set; }
 
