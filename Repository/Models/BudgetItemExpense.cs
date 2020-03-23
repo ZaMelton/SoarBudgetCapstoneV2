@@ -19,6 +19,7 @@ namespace Repository.Models
         public string Category { get; set; }
 
         [Required]
+        [Display(Name = "Amount Spent")]
         public double Amount { get; set; }
 
         [ForeignKey("Budget")]

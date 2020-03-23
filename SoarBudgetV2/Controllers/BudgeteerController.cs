@@ -88,6 +88,16 @@ namespace SoarBudgetV2.Controllers
                     MonthlyMoneySaved = 0,
                     MonthlyRandomExpenseMoney = 0,
                     MonthlyTotalMoney = 0,
+                    CoffeeCategorySpent = 0,
+                    DiningOutCategorySpent = 0,
+                    EntertainmentCategorySpent = 0,
+                    GasCategorySpent = 0,
+                    GroceriesCategorySpent = 0,
+                    CoffeeCategoryLimit = lastMonthBudget.CoffeeCategoryLimit,
+                    DiningOutCategoryLimit = lastMonthBudget.DiningOutCategoryLimit,
+                    EntertainmentCategoryLimit = lastMonthBudget.EntertainmentCategoryLimit,
+                    GasCategoryLimit = lastMonthBudget.GasCategoryLimit,
+                    GroceriesCategoryLimit = lastMonthBudget.GroceriesCategoryLimit,
                     BudgetStartDate = DateTime.Today,
                     MonthId = DateTime.Now.Month,
                     Year = DateTime.Now.Year,
@@ -185,6 +195,7 @@ namespace SoarBudgetV2.Controllers
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
 
                 var newBudgetItem = new BudgetItem
                 {
@@ -195,6 +206,9 @@ namespace SoarBudgetV2.Controllers
                 };
                 _repo.BudgetItems.Create(newBudgetItem);
                 _repo.Save();
+
+                ConfigureCategoryLimits(newBudgetItem, budget);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -353,6 +367,9 @@ namespace SoarBudgetV2.Controllers
                 wallet.TotalMoney += budgetItemExpense.Amount;
                 _repo.Wallets.Update(wallet);
                 _repo.Save();
+
+                ConfigureCategorySpending(newBudgetItemExpense, budget);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -487,6 +504,55 @@ namespace SoarBudgetV2.Controllers
             _repo.DebtItems.Create(nextMonthDebtItem);
             _repo.Save();
             return RedirectToAction("Index");
+        }
+
+        public void ConfigureCategoryLimits(BudgetItem budgetItem, Budget budget)
+        {
+            switch (budgetItem.Category)
+            {
+                case ("Coffee"):
+                    budget.CoffeeCategoryLimit += budgetItem.Amount;
+                    break;
+                case ("Dining Out"):
+                    budget.DiningOutCategoryLimit += budgetItem.Amount;
+                    break;
+                case ("Entertainment"):
+                    budget.EntertainmentCategoryLimit += budgetItem.Amount;
+                    break;
+                case ("Gas"):
+                    budget.GasCategoryLimit += budgetItem.Amount;
+                    break;
+                case ("Groceries"):
+                    budget.GroceriesCategoryLimit += budgetItem.Amount;
+                    break;
+            }
+            budget.MonthlyLimit += budgetItem.Amount;
+            _repo.Budgets.Update(budget);
+            _repo.Save();
+        }
+
+        public void ConfigureCategorySpending(BudgetItemExpense budgetItemExpense, Budget budget)
+        {
+            switch (budgetItemExpense.Category)
+            {
+                case ("Coffee"):
+                    budget.CoffeeCategorySpent += budgetItemExpense.Amount;
+                    break;
+                case ("Dining Out"):
+                    budget.DiningOutCategorySpent += budgetItemExpense.Amount;
+                    break;
+                case ("Entertainment"):
+                    budget.EntertainmentCategorySpent += budgetItemExpense.Amount;
+                    break;
+                case ("Gas"):
+                    budget.GasCategorySpent += budgetItemExpense.Amount;
+                    break;
+                case ("Groceries"):
+                    budget.GroceriesCategorySpent += budgetItemExpense.Amount;
+                    break;
+            }
+            _repo.Budgets.Update(budget);
+            _repo.Save();
         }
     }
 }
