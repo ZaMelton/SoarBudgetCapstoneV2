@@ -161,6 +161,7 @@ namespace SoarBudgetV2.Controllers
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
 
                 var newBill = new Bill
                 {
@@ -172,6 +173,11 @@ namespace SoarBudgetV2.Controllers
                 };
                 _repo.Bills.Create(newBill);
                 _repo.Save();
+
+                budget.MonthlyLimit += newBill.Amount;
+                _repo.Budgets.Update(budget);
+                _repo.Save();
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -232,6 +238,7 @@ namespace SoarBudgetV2.Controllers
             {
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+                var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
 
                 var newDebtItem = new DebtItem
                 {
@@ -244,6 +251,11 @@ namespace SoarBudgetV2.Controllers
                 };
                 _repo.DebtItems.Create(newDebtItem);
                 _repo.Save();
+
+                budget.MonthlyLimit += newDebtItem.AmountToPayPerMonth;
+                _repo.Budgets.Update(budget);
+                _repo.Save();
+
                 return RedirectToAction(nameof(Index));
             }
             catch
