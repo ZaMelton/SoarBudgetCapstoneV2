@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Repository.Contracts;
 using Repository;
 using Repository.Data;
+using SoarBudgetV2.Contracts;
+using SoarBudgetV2.Services;
 
 namespace SoarBudgetV2
 {
@@ -31,6 +33,7 @@ namespace SoarBudgetV2
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+            services.AddScoped<ISmsServices, SmsService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(

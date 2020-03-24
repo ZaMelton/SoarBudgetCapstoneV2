@@ -40,10 +40,10 @@ namespace SoarBudgetV2.Controllers
                 var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
                 var upcomingBills = CheckForDueBills(bills);
                 var lateBills = CheckForLateBills(bills);
-                //if(upcomingBills.Count > 0)
-                //{
-                //    _smsService.SendSMS(budgeteer, upcomingBills);
-                //}
+                if(upcomingBills.Count > 0)
+                {
+                    _smsService.SendSMS(budgeteer, upcomingBills);
+                }
 
                 ViewModel budgeteerView = new ViewModel
                 {
