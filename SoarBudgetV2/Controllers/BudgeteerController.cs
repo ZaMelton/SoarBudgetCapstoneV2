@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Contracts;
 using Repository.Models;
+using SoarBudgetV2.Contracts;
 using SoarBudgetV2.Models;
 
 namespace SoarBudgetV2.Controllers
@@ -14,10 +15,12 @@ namespace SoarBudgetV2.Controllers
     public class BudgeteerController : Controller
     {
         private readonly IRepositoryWrapper _repo;
+        private readonly ISmsServices _smsService;
 
-        public BudgeteerController(IRepositoryWrapper repo)
+        public BudgeteerController(IRepositoryWrapper repo, ISmsServices smsServices)
         {
             _repo = repo;
+            _smsService = smsServices;
         }
 
         // GET: Budgeteer
@@ -37,6 +40,11 @@ namespace SoarBudgetV2.Controllers
                 var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
                 var upcomingBills = CheckForDueBills(bills);
                 var lateBills = CheckForLateBills(bills);
+                //if(upcomingBills.Count > 0)
+                //{
+                //    _smsService.SendSMS(budgeteer, upcomingBills);
+                //}
+
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
@@ -79,7 +87,9 @@ namespace SoarBudgetV2.Controllers
 
             if (budget == null)//If budget is null, that means there is a budget in the database, but its not current, need to make a new one
             {
+                //grabs the last months budget so that important details can be transferred over and saved money can be calculated
                 var lastMonthBudget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month - 1, DateTime.Now.Year);
+                CalculateMoneySaved(lastMonthBudget, budgeteer);
                 budget = new Budget
                 {
                     MonthlyIncome = lastMonthBudget.MonthlyIncome,
@@ -599,10 +609,27 @@ namespace SoarBudgetV2.Controllers
             return lateBillsAlerts;
         }
 
-        public void CalculateMoneySaved(Budget budget)
+        public void CalculateMoneySaved(Budget budget, Budgeteer budgeteer)
         {
             var moneySaved = budget.MonthlyIncome - budget.MonthlyTotalMoney;
             var moneyUnderBudget = budget.MonthlyLimit - budget.MonthlyTotalMoney;
+            var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+
+            if(moneySaved > 0)
+            {
+                wallet.TotalMoneySaved = moneySaved;
+            }
+            if(moneyUnderBudget > 0)
+            {
+                wallet.ExtraCash = moneyUnderBudget;
+            }
+            _repo.Wallets.Update(wallet);
+            _repo.Save();
+        }
+
+        public void CheckForOverSpending(Budget budget)
+        {
+
         }
     }
 }
