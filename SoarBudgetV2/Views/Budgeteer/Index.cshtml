@@ -43,7 +43,24 @@
         }
     </script>
 </head>
-<h1>Welcome, @Model.Budgeteer.FirstName</h1>
+<div class="row">
+    <div class="col-sm-8">
+        <h1>Welcome, @Model.Budgeteer.FirstName</h1>
+    </div>
+
+    @if (Model.UpcomingBills.Count > 0)
+    {
+        <div class="col-sm-4" style="border:1px solid orange">
+            <ul>
+                @foreach (var bill in Model.UpcomingBills)
+                {
+                    <li>@bill</li>
+                }
+            </ul>
+            }
+        </div>
+    }
+</div>
 <br />
 <br />
 <div class="row">

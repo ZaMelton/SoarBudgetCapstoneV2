@@ -30,5 +30,8 @@ namespace Repository.Models
 
         [Display(Name = "Total Money Saved")]
         public double TotalMoneySaved { get; set; }
+
+        [Display(Name = "Extra Cash")]
+        public double ExtraCash { get; set; }
     }
 }

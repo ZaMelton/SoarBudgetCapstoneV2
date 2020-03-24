@@ -35,6 +35,8 @@ namespace SoarBudgetV2.Controllers
                 var budgetItemExpenses = _repo.BudgetItemExpenses.GetAllBudgetItemExpensesForBudget(budget.BudgetId);
                 var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
                 var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
+                var upcomingBills = CheckForDueBills(bills);
+                var lateBills = CheckForLateBills(bills);
                 ViewModel budgeteerView = new ViewModel
                 {
                     Budgeteer = budgeteer,
@@ -45,7 +47,9 @@ namespace SoarBudgetV2.Controllers
                     DebtItems = debtItems,
                     GoalItems = goalItems,
                     RandomExpenses = randomExpenses,
-                    BudgetItemExpenses = budgetItemExpenses
+                    BudgetItemExpenses = budgetItemExpenses,
+                    UpcomingBills = upcomingBills,
+                    LateBills = lateBills
                 };
                 return View(budgeteerView);
             }
@@ -565,6 +569,40 @@ namespace SoarBudgetV2.Controllers
             }
             _repo.Budgets.Update(budget);
             _repo.Save();
+        }
+
+        public List<string> CheckForDueBills(List<Bill> bills)
+        {
+            List<string> dueBillsAlerts = new List<string>();
+            foreach(var bill in bills)
+            {
+                var daysUntilDue = bill.DueDate.Day - DateTime.Now.Day;
+                if (daysUntilDue <= 3 && daysUntilDue >= 0)
+                {
+                    dueBillsAlerts.Add($"{bill.BillName} is due soon!");
+                }
+            }
+            return dueBillsAlerts;
+        }
+
+        public List<string> CheckForLateBills(List<Bill> bills)
+        {
+            List<string> lateBillsAlerts = new List<string>();
+            foreach (var bill in bills)
+            {
+                var daysLate = bill.DueDate.Day - DateTime.Now.Day;
+                if (daysLate < 0)
+                {
+                    lateBillsAlerts.Add($"{bill.BillName} is late!");
+                }
+            }
+            return lateBillsAlerts;
+        }
+
+        public void CalculateMoneySaved(Budget budget)
+        {
+            var moneySaved = budget.MonthlyIncome - budget.MonthlyTotalMoney;
+            var moneyUnderBudget = budget.MonthlyLimit - budget.MonthlyTotalMoney;
         }
     }
 }
