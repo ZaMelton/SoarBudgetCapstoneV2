@@ -38,12 +38,14 @@ namespace SoarBudgetV2.Controllers
                 var budgetItemExpenses = _repo.BudgetItemExpenses.GetAllBudgetItemExpensesForBudget(budget.BudgetId);
                 var randomExpenses = _repo.RandomExpenses.GetAllRandomExpensesForBudget(budget.BudgetId);
                 var goalItems = _repo.GoalItems.GetAllGoalItemsForBudgeteer(budgeteer.BudgeteerId);
-                var upcomingBills = CheckForDueBills(bills);
-                var lateBills = CheckForLateBills(bills);
-                if(upcomingBills.Count > 0)
-                {
-                    _smsService.SendSMS(budgeteer, upcomingBills);
-                }
+                var upcomingBills = CheckForDueBillsAndDebts(bills, debtItems);
+                var lateBills = CheckForLateBillsAndDebts(bills, debtItems);
+                var approachingAlerts = CheckForApproachingSpendingLimit(budget);
+                var overspendingAlerts = CheckForOverSpending(budget);
+                //if(upcomingBills.Count > 0)
+                //{
+                //    _smsService.SendSMS(budgeteer, upcomingBills);
+                //}
 
                 ViewModel budgeteerView = new ViewModel
                 {
@@ -57,7 +59,9 @@ namespace SoarBudgetV2.Controllers
                     RandomExpenses = randomExpenses,
                     BudgetItemExpenses = budgetItemExpenses,
                     UpcomingBills = upcomingBills,
-                    LateBills = lateBills
+                    LateBills = lateBills,
+                    ApproachingAlerts = approachingAlerts,
+                    OverspendingAlerts = overspendingAlerts
                 };
                 return View(budgeteerView);
             }
@@ -581,32 +585,48 @@ namespace SoarBudgetV2.Controllers
             _repo.Save();
         }
 
-        public List<string> CheckForDueBills(List<Bill> bills)
+        public List<string> CheckForDueBillsAndDebts(List<Bill> bills, List<DebtItem> debtItems)
         {
-            List<string> dueBillsAlerts = new List<string>();
+            List<string> dueBillsAndDebtsAlerts = new List<string>();
             foreach(var bill in bills)
             {
-                var daysUntilDue = bill.DueDate.Day - DateTime.Now.Day;
-                if (daysUntilDue <= 3 && daysUntilDue >= 0)
+                var daysUntilBillDue = bill.DueDate.Day - DateTime.Now.Day;
+                if (daysUntilBillDue <= 3 && daysUntilBillDue >= 0)
                 {
-                    dueBillsAlerts.Add($"{bill.BillName} is due soon!");
+                    dueBillsAndDebtsAlerts.Add($"{bill.BillName} is due soon!");
                 }
             }
-            return dueBillsAlerts;
+            foreach(var debtItem in debtItems)
+            {
+                var daysUntilDebtDue = debtItem.DueDate.Day - DateTime.Now.Day;
+                if (daysUntilDebtDue <= 3 && daysUntilDebtDue >= 0)
+                {
+                    dueBillsAndDebtsAlerts.Add($"{debtItem.DebtItemName} is due soon!");
+                }
+            }
+            return dueBillsAndDebtsAlerts;
         }
 
-        public List<string> CheckForLateBills(List<Bill> bills)
+        public List<string> CheckForLateBillsAndDebts(List<Bill> bills, List<DebtItem> debtItems)
         {
-            List<string> lateBillsAlerts = new List<string>();
+            List<string> lateBillsAndDebtsAlerts = new List<string>();
             foreach (var bill in bills)
             {
                 var daysLate = bill.DueDate.Day - DateTime.Now.Day;
                 if (daysLate < 0)
                 {
-                    lateBillsAlerts.Add($"{bill.BillName} is late!");
+                    lateBillsAndDebtsAlerts.Add($"{bill.BillName} is late!");
                 }
             }
-            return lateBillsAlerts;
+            foreach (var debtItem in debtItems)
+            {
+                var daysLate = debtItem.DueDate.Day - DateTime.Now.Day;
+                if (daysLate < 0)
+                {
+                    lateBillsAndDebtsAlerts.Add($"{debtItem.DebtItemName} is late!");
+                }
+            }
+            return lateBillsAndDebtsAlerts;
         }
 
         public void CalculateMoneySaved(Budget budget, Budgeteer budgeteer)
@@ -627,9 +647,65 @@ namespace SoarBudgetV2.Controllers
             _repo.Save();
         }
 
-        public void CheckForOverSpending(Budget budget)
+        public List<string> CheckForOverSpending(Budget budget)
         {
+            List<string> overspendingAlerts = new List<string>();
+            if(budget.CoffeeCategoryLimit - budget.CoffeeCategorySpent <= 0)
+            {
+                overspendingAlerts.Add($"You're over your coffee limit!");
+            }
+            if (budget.EntertainmentCategoryLimit - budget.EntertainmentCategorySpent <= 0)
+            {
+                overspendingAlerts.Add($"You're over your entertainment limit!");
+            }
+            if (budget.GasCategoryLimit - budget.GasCategorySpent <= 0)
+            {
+                overspendingAlerts.Add($"You're over your gas limit!");
+            }
+            if (budget.GroceriesCategoryLimit - budget.GroceriesCategorySpent <= 0)
+            {
+                overspendingAlerts.Add($"You're over your groceries limit!");
+            }
+            if (budget.DiningOutCategoryLimit - budget.DiningOutCategorySpent <= 0)
+            {
+                overspendingAlerts.Add($"You're over your dining limit!");
+            }
+            if (budget.RandomExpenseLimit - budget.MonthlyRandomExpenseMoney <= 0)
+            {
+                overspendingAlerts.Add($"You're over you're random expense limit!");
+            }
+            return overspendingAlerts;
+        }
 
+        public List<string> CheckForApproachingSpendingLimit(Budget budget)
+        {
+            double percentageOfLimit = 0.7;
+            List<string> approachingLimitAlerts = new List<string>();
+            if (budget.CoffeeCategorySpent > (budget.CoffeeCategoryLimit * percentageOfLimit) && budget.CoffeeCategorySpent < budget.CoffeeCategoryLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your coffee limit!");
+            }
+            if (budget.EntertainmentCategorySpent > (budget.EntertainmentCategoryLimit * percentageOfLimit) && budget.EntertainmentCategorySpent < budget.EntertainmentCategoryLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your entertainment limit!");
+            }
+            if (budget.GasCategorySpent > (budget.GasCategoryLimit * percentageOfLimit) && budget.GasCategorySpent < budget.GasCategoryLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your gas limit!");
+            }
+            if (budget.GroceriesCategorySpent > (budget.GroceriesCategoryLimit * percentageOfLimit) && budget.GroceriesCategorySpent < budget.GroceriesCategoryLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your groceries limit!");
+            }
+            if (budget.DiningOutCategorySpent > (budget.DiningOutCategoryLimit * percentageOfLimit) && budget.DiningOutCategorySpent < budget.DiningOutCategoryLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your dining limit!");
+            }
+            if (budget.MonthlyRandomExpenseMoney > (budget.RandomExpenseLimit * percentageOfLimit) && budget.MonthlyRandomExpenseMoney < budget.RandomExpenseLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your random expense limit!");
+            }
+            return approachingLimitAlerts;
         }
     }
 }

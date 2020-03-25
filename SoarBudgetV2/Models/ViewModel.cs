@@ -25,5 +25,7 @@ namespace SoarBudgetV2.Models
         public List<BudgetItemExpense> BudgetItemExpenses { get; set; }
         public List<string> UpcomingBills { get; set; }
         public List<string> LateBills { get; set; }
+        public List<string> OverspendingAlerts { get; set; }
+        public List<string> ApproachingAlerts { get; set; }
     }
 }
