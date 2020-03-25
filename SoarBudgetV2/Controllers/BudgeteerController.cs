@@ -453,8 +453,9 @@ namespace SoarBudgetV2.Controllers
             {
                 var budgetFromDb = _repo.Budgets.GetBudget(budgetId);
                 budgetFromDb.MonthlyIncome = budget.MonthlyIncome;
-                budgetFromDb.MonthlyLimit = budget.MonthlyLimit;
+                budgetFromDb.MonthlyLimit -= budgetFromDb.RandomExpenseLimit;
                 budgetFromDb.RandomExpenseLimit = budget.RandomExpenseLimit;
+                budgetFromDb.MonthlyLimit += budget.RandomExpenseLimit;
                 _repo.Budgets.Update(budgetFromDb);
                 _repo.Save();
                 return RedirectToAction(nameof(Index));
@@ -674,6 +675,10 @@ namespace SoarBudgetV2.Controllers
             {
                 overspendingAlerts.Add($"You're over you're random expense limit!");
             }
+            if (budget.MonthlyLimit - budget.MonthlyTotalMoney <= 0)
+            {
+                overspendingAlerts.Add($"You're over your budget limit for the month!");
+            }
             return overspendingAlerts;
         }
 
@@ -704,6 +709,10 @@ namespace SoarBudgetV2.Controllers
             if (budget.MonthlyRandomExpenseMoney > (budget.RandomExpenseLimit * percentageOfLimit) && budget.MonthlyRandomExpenseMoney < budget.RandomExpenseLimit)
             {
                 approachingLimitAlerts.Add($"You're getting close to your random expense limit!");
+            }
+            if (budget.MonthlyTotalMoney > (budget.MonthlyLimit * percentageOfLimit) && budget.MonthlyTotalMoney < budget.MonthlyLimit)
+            {
+                approachingLimitAlerts.Add($"You're getting close to your budget limit!");
             }
             return approachingLimitAlerts;
         }
