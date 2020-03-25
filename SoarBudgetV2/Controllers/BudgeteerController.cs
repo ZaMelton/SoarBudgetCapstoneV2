@@ -537,6 +537,27 @@ namespace SoarBudgetV2.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult PurchaseGoalItem(int goalItemId)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+            var wallet = _repo.Wallets.GetWallet(budgeteer.WalletId);
+            var goalItemFromDb = _repo.GoalItems.GetGoalItem(goalItemId);
+            if(wallet.ExtraCash >= goalItemFromDb.Amount)
+            {
+                wallet.ExtraCash -= goalItemFromDb.Amount;
+                wallet.TotalGoalItemMoney += goalItemFromDb.Amount;
+                wallet.TotalMoney += goalItemFromDb.Amount;
+
+                _repo.Wallets.Update(wallet);
+                _repo.Save();
+
+                _repo.GoalItems.Delete(goalItemFromDb);
+                _repo.Save();
+            }
+            return RedirectToAction("Index");
+        }
+
         public void ConfigureCategoryLimits(BudgetItem budgetItem, Budget budget)
         {
             switch (budgetItem.Category)
@@ -651,31 +672,31 @@ namespace SoarBudgetV2.Controllers
         public List<string> CheckForOverSpending(Budget budget)
         {
             List<string> overspendingAlerts = new List<string>();
-            if(budget.CoffeeCategoryLimit - budget.CoffeeCategorySpent <= 0)
+            if(budget.CoffeeCategorySpent > budget.CoffeeCategoryLimit)
             {
                 overspendingAlerts.Add($"You're over your coffee limit!");
             }
-            if (budget.EntertainmentCategoryLimit - budget.EntertainmentCategorySpent <= 0)
+            if (budget.EntertainmentCategorySpent > budget.EntertainmentCategoryLimit)
             {
                 overspendingAlerts.Add($"You're over your entertainment limit!");
             }
-            if (budget.GasCategoryLimit - budget.GasCategorySpent <= 0)
+            if (budget.GasCategorySpent > budget.GasCategoryLimit)
             {
                 overspendingAlerts.Add($"You're over your gas limit!");
             }
-            if (budget.GroceriesCategoryLimit - budget.GroceriesCategorySpent <= 0)
+            if (budget.GroceriesCategorySpent > budget.GroceriesCategoryLimit)
             {
                 overspendingAlerts.Add($"You're over your groceries limit!");
             }
-            if (budget.DiningOutCategoryLimit - budget.DiningOutCategorySpent <= 0)
+            if (budget.DiningOutCategorySpent > budget.DiningOutCategoryLimit)
             {
                 overspendingAlerts.Add($"You're over your dining limit!");
             }
-            if (budget.RandomExpenseLimit - budget.MonthlyRandomExpenseMoney <= 0)
+            if (budget.MonthlyRandomExpenseMoney > budget.RandomExpenseLimit)
             {
                 overspendingAlerts.Add($"You're over you're random expense limit!");
             }
-            if (budget.MonthlyLimit - budget.MonthlyTotalMoney <= 0)
+            if (budget.MonthlyTotalMoney > budget.MonthlyLimit)
             {
                 overspendingAlerts.Add($"You're over your budget limit for the month!");
             }
