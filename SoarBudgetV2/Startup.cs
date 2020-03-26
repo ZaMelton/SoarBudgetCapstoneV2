@@ -34,6 +34,7 @@ namespace SoarBudgetV2
         {
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
             services.AddScoped<ISmsServices, SmsService>();
+            services.AddScoped<IGoogleCalendarServices, GoogleCalendarService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(

@@ -16,11 +16,13 @@ namespace SoarBudgetV2.Controllers
     {
         private readonly IRepositoryWrapper _repo;
         private readonly ISmsServices _smsService;
+        private readonly IGoogleCalendarServices _googleCalendarService;
 
-        public BudgeteerController(IRepositoryWrapper repo, ISmsServices smsServices)
+        public BudgeteerController(IRepositoryWrapper repo, ISmsServices smsServices, IGoogleCalendarServices googleCalendarServices)
         {
             _repo = repo;
             _smsService = smsServices;
+            _googleCalendarService = googleCalendarServices;
         }
 
         // GET: Budgeteer
@@ -196,6 +198,8 @@ namespace SoarBudgetV2.Controllers
                 _repo.Budgets.Update(budget);
                 _repo.Save();
 
+                _googleCalendarService.AddBillEvent(newBill);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -273,6 +277,8 @@ namespace SoarBudgetV2.Controllers
                 budget.MonthlyLimit += newDebtItem.AmountToPayPerMonth;
                 _repo.Budgets.Update(budget);
                 _repo.Save();
+
+                _googleCalendarService.AddDebtItemEvent(newDebtItem);
 
                 return RedirectToAction(nameof(Index));
             }
