@@ -32,8 +32,7 @@ namespace SoarBudgetV2.Services
             using (var stream =
                 new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
-                // The file token.json stores the user's access and refresh tokens, and is created
-                // automatically when the authorization flow completes for the first time.
+
                 string credPath = "token.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
@@ -44,14 +43,12 @@ namespace SoarBudgetV2.Services
                 Console.WriteLine("Credential file saved to: " + credPath);
             }
 
-            // Create Google Calendar API service.
             var service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
 
-            // Define parameters of request.
             EventsResource.ListRequest request = service.Events.List("primary");
             request.TimeMin = DateTime.Now;
             request.ShowDeleted = false;
@@ -65,7 +62,6 @@ namespace SoarBudgetV2.Services
 
             EventDateTime end = new EventDateTime();
             end.DateTime = bill.DueDate.AddMinutes(30);
-
 
             billEvent.Start = start;
             billEvent.End = end;
@@ -83,8 +79,6 @@ namespace SoarBudgetV2.Services
             using (var stream =
                 new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {
-                // The file token.json stores the user's access and refresh tokens, and is created
-                // automatically when the authorization flow completes for the first time.
                 string credPath = "token.json";
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
@@ -95,14 +89,12 @@ namespace SoarBudgetV2.Services
                 Console.WriteLine("Credential file saved to: " + credPath);
             }
 
-            // Create Google Calendar API service.
             var service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
 
-            // Define parameters of request.
             EventsResource.ListRequest request = service.Events.List("primary");
             request.TimeMin = DateTime.Now;
             request.ShowDeleted = false;
@@ -116,7 +108,6 @@ namespace SoarBudgetV2.Services
 
             EventDateTime end = new EventDateTime();
             end.DateTime = debtItem.DueDate.AddMinutes(30);
-
 
             debtItemEvent.Start = start;
             debtItemEvent.End = end;

@@ -44,6 +44,7 @@ namespace SoarBudgetV2.Controllers
                 var lateBills = CheckForLateBillsAndDebts(bills, debtItems);
                 var approachingAlerts = CheckForApproachingSpendingLimit(budget);
                 var overspendingAlerts = CheckForOverSpending(budget);
+                ConfigureMonthlyLimit(bills, debtItems, budgetItems);
                 //if(upcomingBills.Count > 0)
                 //{
                 //    _smsService.SendSMS(budgeteer, upcomingBills);
@@ -194,9 +195,9 @@ namespace SoarBudgetV2.Controllers
                 _repo.Bills.Create(newBill);
                 _repo.Save();
 
-                budget.MonthlyLimit += newBill.Amount;
-                _repo.Budgets.Update(budget);
-                _repo.Save();
+                //budget.MonthlyLimit += newBill.Amount;
+                //_repo.Budgets.Update(budget);
+                //_repo.Save();
 
                 _googleCalendarService.AddBillEvent(newBill);
 
@@ -274,9 +275,9 @@ namespace SoarBudgetV2.Controllers
                 _repo.DebtItems.Create(newDebtItem);
                 _repo.Save();
 
-                budget.MonthlyLimit += newDebtItem.AmountToPayPerMonth;
-                _repo.Budgets.Update(budget);
-                _repo.Save();
+                //budget.MonthlyLimit += newDebtItem.AmountToPayPerMonth;
+                //_repo.Budgets.Update(budget);
+                //_repo.Save();
 
                 _googleCalendarService.AddDebtItemEvent(newDebtItem);
 
@@ -504,6 +505,7 @@ namespace SoarBudgetV2.Controllers
             };
             _repo.Bills.Create(nextMonthBill);
             _repo.Save();
+            _googleCalendarService.AddBillEvent(nextMonthBill);
             return RedirectToAction("Index");
         }
 
@@ -540,6 +542,7 @@ namespace SoarBudgetV2.Controllers
             };
             _repo.DebtItems.Create(nextMonthDebtItem);
             _repo.Save();
+            _googleCalendarService.AddDebtItemEvent(nextMonthDebtItem);
             return RedirectToAction("Index");
         }
 
@@ -584,7 +587,7 @@ namespace SoarBudgetV2.Controllers
                     budget.GroceriesCategoryLimit += budgetItem.Amount;
                     break;
             }
-            budget.MonthlyLimit += budgetItem.Amount;
+            //budget.MonthlyLimit += budgetItem.Amount;
             _repo.Budgets.Update(budget);
             _repo.Save();
         }
@@ -742,6 +745,28 @@ namespace SoarBudgetV2.Controllers
                 approachingLimitAlerts.Add($"You're getting close to your budget limit!");
             }
             return approachingLimitAlerts;
+        }
+
+        public void ConfigureMonthlyLimit(List<Bill> bills, List<DebtItem> debtItems, List<BudgetItem> budgetItems)
+        {
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var budgeteer = _repo.Budgeteers.GetBudgeteerByUserId(userId);
+            var budget = _repo.Budgets.GetBudgetByBudgeteerIdMonthAndYear(budgeteer.BudgeteerId, DateTime.Now.Month, DateTime.Now.Year);
+
+            foreach(var bill in bills)
+            {
+                budget.MonthlyLimit += bill.Amount;
+            }
+            foreach(var debt in debtItems)
+            {
+                budget.MonthlyLimit += debt.AmountToPayPerMonth;
+            }
+            foreach(var budgetItem in budgetItems)
+            {
+                budget.MonthlyLimit += budgetItem.Amount;
+            }
+            _repo.Budgets.Update(budget);
+            _repo.Save();
         }
     }
 }
